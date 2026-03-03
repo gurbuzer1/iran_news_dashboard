@@ -3,6 +3,7 @@
 
 import sqlite3
 from datetime import datetime, timedelta
+from difflib import SequenceMatcher
 
 import pandas as pd
 import streamlit as st
@@ -113,7 +114,65 @@ if not filtered.empty:
     st.bar_chart(chart_data, x="source", y="count")
 
 # --- Tabs ---
-tab_cards, tab_table = st.tabs(["Article Cards", "Data Table"])
+tab_summary, tab_cards, tab_table = st.tabs(["Executive Summary", "Article Cards", "Data Table"])
+
+with tab_summary:
+    if filtered.empty:
+        st.info("No articles available for summary.")
+    else:
+        # Get the 10 most recent articles
+        recent = filtered.dropna(subset=["pub_date"]).head(10)
+
+        # Find "confirmed" stories: titles that appear across 2+ sources (fuzzy match)
+        all_titles = filtered[["title", "source"]].drop_duplicates()
+        confirmed_titles = set()
+        title_list = all_titles["title"].tolist()
+        source_list = all_titles["source"].tolist()
+        for i, t1 in enumerate(title_list):
+            for j, t2 in enumerate(title_list):
+                if i >= j or source_list[i] == source_list[j]:
+                    continue
+                if SequenceMatcher(None, t1.lower(), t2.lower()).ratio() > 0.55:
+                    confirmed_titles.add(t1)
+                    confirmed_titles.add(t2)
+                    break
+
+        def is_confirmed(title):
+            if title in confirmed_titles:
+                return True
+            for ct in confirmed_titles:
+                if SequenceMatcher(None, title.lower(), ct.lower()).ratio() > 0.55:
+                    return True
+            return False
+
+        st.subheader("Latest Headlines")
+        st.caption("Stories reported by multiple sources are marked as confirmed.")
+
+        for _, row in recent.iterrows():
+            pub = row["pub_date"].strftime("%H:%M") if pd.notna(row["pub_date"]) else ""
+            link = row["link"] if row["link"] else "#"
+            confirmed = is_confirmed(row["title"])
+
+            if confirmed:
+                st.markdown(
+                    f'- **`{pub}`** &nbsp; [{row["title"]}]({link}) &nbsp; '
+                    f'<span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75em;">'
+                    f'CONFIRMED</span> &nbsp; <span style="color:#888;font-size:0.85em;">{row["source"]}</span>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f'- **`{pub}`** &nbsp; [{row["title"]}]({link}) &nbsp; '
+                    f'<span style="color:#888;font-size:0.85em;">{row["source"]}</span>',
+                    unsafe_allow_html=True,
+                )
+
+        # Count confirmed vs unconfirmed
+        confirmed_count = sum(1 for _, r in recent.iterrows() if is_confirmed(r["title"]))
+        st.divider()
+        c1, c2 = st.columns(2)
+        c1.metric("Confirmed", confirmed_count)
+        c2.metric("Unconfirmed", len(recent) - confirmed_count)
 
 with tab_cards:
     if filtered.empty:
