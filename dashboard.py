@@ -51,11 +51,13 @@ def find_confirmed(recent_titles, all_df):
     return confirmed
 
 
-# --- Auto-scrape on first load (needed for Streamlit Cloud) ---
-if "scraped" not in st.session_state:
+# --- Auto-scrape: on first load + every 5 min ---
+last_scrape = st.session_state.get("last_scrape", 0)
+import time as _time
+if _time.time() - last_scrape > 300:  # 5 minutes
     with st.spinner("Fetching latest news..."):
         run_scraper_inline()
-    st.session_state.scraped = True
+    st.session_state.last_scrape = _time.time()
 
 # --- Page config ---
 st.set_page_config(page_title="Iran Conflict News", page_icon="📰", layout="wide")
