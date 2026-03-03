@@ -68,6 +68,73 @@ RSS_FEEDS = [
         "url": "https://news.google.com/rss/search?q=iran+site:al-monitor.com&hl=en-US&gl=US&ceid=US:en",
         "type": "google",
     },
+    # Twitter/X viral content
+    {
+        "name": "Twitter/X (via Google)",
+        "url": "https://news.google.com/rss/search?q=iran+twitter&hl=en-US&gl=US&ceid=US:en",
+        "type": "google",
+    },
+    # Military / Defense
+    {
+        "name": "Defense One",
+        "url": "https://www.defenseone.com/rss/all/",
+        "type": "standard",
+    },
+    {
+        "name": "The War Zone",
+        "url": "https://www.twz.com/rss",
+        "type": "standard",
+    },
+    # US media
+    {
+        "name": "NPR World",
+        "url": "https://feeds.npr.org/1004/rss.xml",
+        "type": "standard",
+    },
+    {
+        "name": "PBS NewsHour",
+        "url": "https://www.pbs.org/newshour/feeds/rss/world",
+        "type": "standard",
+    },
+    {
+        "name": "Fox News World",
+        "url": "https://moxie.foxnews.com/google-publisher/world.xml",
+        "type": "standard",
+    },
+    # Analysis / Investigative
+    {
+        "name": "Foreign Policy",
+        "url": "https://foreignpolicy.com/feed/",
+        "type": "standard",
+    },
+    {
+        "name": "The Intercept",
+        "url": "https://theintercept.com/feed/?rss",
+        "type": "standard",
+    },
+    # International / UN
+    {
+        "name": "UN News Middle East",
+        "url": "https://news.un.org/feed/subscribe/en/news/region/middle-east/feed/rss.xml",
+        "type": "standard",
+    },
+    # Israeli media
+    {
+        "name": "Ynet News",
+        "url": "https://www.ynet.co.il/3rdparty/mobile/rss/ynetnews/3082/",
+        "type": "standard",
+    },
+    # Iranian state media (labeled)
+    {
+        "name": "Press TV [Iran State]",
+        "url": "https://www.presstv.ir/rss/rss-102.xml",
+        "type": "standard",
+    },
+    {
+        "name": "Tasnim News [Iran Semi-Official]",
+        "url": "https://tasnimnews.ir/en/rss/feed/0/0/8/1/TopStories",
+        "type": "standard",
+    },
 ]
 
 
